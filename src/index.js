@@ -67,7 +67,7 @@ let messages = [
   }
 ];
 
-let selectedMessageIds = [1, 3, 7];
+let selectedMessageIds = [];
 
 function render() {
   ReactDOM.render(
@@ -119,11 +119,13 @@ function onUnstarMessage(messageId) {
 }
 
 function onSelectMessage(messageId) {
-  //selected = true;
+  selectedMessageIds.push(messageId);
+  console.log(selectedMessageIds);
   render();
 }
 
 function onDeselectMessage(messageId) {
-  //selected = false;
+  selectedMessageIds.splice(selectedMessageIds.indexOf(messageId), 1);
+  console.log(selectedMessageIds);
   render();
 }

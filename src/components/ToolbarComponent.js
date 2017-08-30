@@ -19,7 +19,36 @@ function theBtn(count) {
   }
 }
 
-export default function ToolbarComponent({ messages, selectedMessageCount }) {
+onSelectAllMessages;
+
+export default function ToolbarComponent({
+  messages,
+  selectedMessageCount,
+  onOpenComposeForm,
+  onMarkAsReadSelectedMessages,
+  onMarkAsUnreadSelectedMessages
+}) {
+  function handleClickPlus(event) {
+    const $plus = event.target;
+    console.log($plus);
+    console.log('touched PLUS button');
+    //onOpenComposeForm();
+  }
+
+  function handleClickReadButton(event) {
+    const $readButton = event.target;
+    console.log($readButton);
+    console.log('touched MARK AS READ button');
+    //onMarkAsReadSelectedMessages();
+  }
+
+  function handleClickUnreadButton(event) {
+    const $unreadButton = event.target;
+    console.log($unreadButton);
+    console.log('touched MARK AS UNREAD button');
+    //onMarkAsUnreadSelectedMessages();
+  }
+
   return (
     <div className="row toolbar">
       <div className="col-md-12">
@@ -29,7 +58,7 @@ export default function ToolbarComponent({ messages, selectedMessageCount }) {
         </p>
 
         <a className="btn btn-danger">
-          <i className="fa fa-plus" />
+          <i className="fa fa-plus" onClick={handleClickPlus} />
         </a>
 
         <button className="btn btn-default">
@@ -38,13 +67,15 @@ export default function ToolbarComponent({ messages, selectedMessageCount }) {
 
         <button
           className="btn btn-default"
-          disabled={theBtn(selectedMessageCount)}>
+          disabled={theBtn(selectedMessageCount)}
+          onClick={handleClickReadButton}>
           Mark As Read
         </button>
 
         <button
           className="btn btn-default"
-          disabled={theBtn(selectedMessageCount)}>
+          disabled={theBtn(selectedMessageCount)}
+          onClick={handleClickUnreadButton}>
           Mark As Unread
         </button>
 

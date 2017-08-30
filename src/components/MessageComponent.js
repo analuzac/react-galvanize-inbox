@@ -34,6 +34,19 @@ export default function MessageComponent({
   onStarMessage,
   onUnstarMessage
 }) {
+  function handleChangeCheckbox(event) {
+    // event.preventDefault();
+    const $checkbox = event.target;
+    console.log($checkbox);
+    if ($checkbox.checked) {
+      onSelectMessage(message.id);
+      console.log('turned check ON');
+    } else {
+      onDeselectMessage(message.id);
+      console.log('turned check OFF');
+    }
+  }
+
   function handleClickRead(event) {
     event.preventDefault();
     // const $read = event.target;
@@ -41,19 +54,6 @@ export default function MessageComponent({
     if (message.read !== true) {
       onMarkAsReadMessage(message.id);
       console.log('became READ');
-    }
-  }
-
-  function handleChangeCheckbox(event) {
-    event.preventDefault();
-    // const $checkbox = event.target;
-    // console.log($checkbox);
-    if (selected !== true) {
-      onSelectMessage(message.id);
-      console.log('turned check ON');
-    } else {
-      onDeselectMessage(message.id);
-      console.log('turned check OFF');
     }
   }
 
@@ -75,16 +75,15 @@ export default function MessageComponent({
       <div
         className={
           message.read === true
-            ? 'row message read selected'
-            : 'row message unread selected'
-        }
-        onClick={handleClickRead}>
+            ? `row message read${selected ? ' selected' : ''}`
+            : `row message unread${selected ? ' selected' : ''}`
+        }>
         <div className="col-xs-1">
           <div className="row">
             <div className="col-xs-2">
               <input
                 type="checkbox"
-                checked={selected === true ? 'checked' : null}
+                checked={selected === true}
                 onChange={handleChangeCheckbox}
               />
             </div>
@@ -100,7 +99,7 @@ export default function MessageComponent({
             </div>
           </div>
         </div>
-        <div className="col-xs-11">
+        <div className="col-xs-11" onClick={handleClickRead}>
           {renderLabels(message.labels)}
 
           <a href="www.hi.com">

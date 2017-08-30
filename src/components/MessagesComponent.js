@@ -16,9 +16,7 @@ export default function MessagesComponent({
       {messages.map(message =>
         <MessageComponent
           key={message.id}
-          selected={selectedMessageIds.forEach(
-            selId => (selId === message.id ? true : false)
-          )}
+          selected={selectedMessageIds.includes(message.id)}
           message={message}
           onStarMessage={onStarMessage}
           onUnstarMessage={onUnstarMessage}
