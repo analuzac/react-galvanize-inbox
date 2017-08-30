@@ -7,7 +7,12 @@ import ComposeFormComponent from './ComposeFormComponent';
 export default function InboxPage({
   messages,
   selectedMessageIds,
-  showComposeForm
+  showComposeForm,
+  onStarMessage,
+  onUnstarMessage,
+  onSelectMessage,
+  onDeselectMessage,
+  onMarkAsReadMessage
 }) {
   return (
     <div className="InboxPage">
@@ -19,6 +24,11 @@ export default function InboxPage({
         <MessagesComponent
           messages={messages}
           selectedMessageIds={selectedMessageIds}
+          onStarMessage={onStarMessage}
+          onUnstarMessage={onUnstarMessage}
+          onSelectMessage={onSelectMessage}
+          onDeselectMessage={onDeselectMessage}
+          onMarkAsReadMessage={onMarkAsReadMessage}
         />
         {showComposeForm && <ComposeFormComponent />}
       </InboxPageLayout>

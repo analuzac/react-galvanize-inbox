@@ -24,7 +24,52 @@ function renderLabels(labels) {
 // }
 //for this: MessageComponent({ expanded, selected, message })
 
-export default function MessageComponent({ selected, message }) {
+export default function MessageComponent({
+  selected,
+  message,
+  messageId,
+  onMarkAsReadMessage,
+  onSelectMessage,
+  onDeselectMessage,
+  onStarMessage,
+  onUnstarMessage
+}) {
+  function handleClickRead(event) {
+    event.preventDefault();
+    // const $read = event.target;
+    // console.log($read);
+    if (message.read !== true) {
+      onMarkAsReadMessage(message.id);
+      console.log('became READ');
+    }
+  }
+
+  function handleChangeCheckbox(event) {
+    event.preventDefault();
+    // const $checkbox = event.target;
+    // console.log($checkbox);
+    if (selected !== true) {
+      onSelectMessage(message.id);
+      console.log('turned check ON');
+    } else {
+      onDeselectMessage(message.id);
+      console.log('turned check OFF');
+    }
+  }
+
+  function handleClickStar(event) {
+    event.preventDefault();
+    //const $star = event.target;
+    //console.log($star.class);
+    if (message.starred !== true) {
+      onStarMessage(message.id);
+      console.log('turned star ON');
+    } else {
+      onUnstarMessage(message.id);
+      console.log('turned star OFF');
+    }
+  }
+
   return (
     <div>
       <div
@@ -32,13 +77,15 @@ export default function MessageComponent({ selected, message }) {
           message.read === true
             ? 'row message read selected'
             : 'row message unread selected'
-        }>
+        }
+        onClick={handleClickRead}>
         <div className="col-xs-1">
           <div className="row">
             <div className="col-xs-2">
               <input
                 type="checkbox"
                 checked={selected === true ? 'checked' : null}
+                onChange={handleChangeCheckbox}
               />
             </div>
             <div className="col-xs-2">
@@ -48,12 +95,14 @@ export default function MessageComponent({ selected, message }) {
                     ? 'star fa fa-star'
                     : 'star fa fa-star-o'
                 }
+                onClick={handleClickStar}
               />
             </div>
           </div>
         </div>
         <div className="col-xs-11">
           {renderLabels(message.labels)}
+
           <a href="www.hi.com">
             {message.subject}
           </a>

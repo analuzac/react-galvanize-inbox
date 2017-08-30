@@ -69,11 +69,61 @@ let messages = [
 
 let selectedMessageIds = [1, 3, 7];
 
-ReactDOM.render(
-  <InboxPage
-    messages={messages}
-    selectedMessageIds={selectedMessageIds}
-    showComposeForm={true}
-  />,
-  document.getElementById('root')
-);
+function render() {
+  ReactDOM.render(
+    <InboxPage
+      messages={messages}
+      selectedMessageIds={selectedMessageIds}
+      showComposeForm={true}
+      onStarMessage={onStarMessage}
+      onUnstarMessage={onUnstarMessage}
+      onSelectMessage={onSelectMessage}
+      onDeselectMessage={onDeselectMessage}
+      onMarkAsReadMessage={onMarkAsReadMessage}
+    />,
+    document.getElementById('root')
+  );
+}
+
+//Calling render once at the beginning to initialize page
+render();
+
+function onMarkAsReadMessage(messageId) {
+  console.log('inside onMarkAsReadMessage');
+  for (let i = 0; i < messages.length; i++) {
+    if (messages[i].id === messageId) {
+      messages[i].read = true;
+    }
+  }
+  render();
+}
+
+function onStarMessage(messageId) {
+  console.log('inside onStarMessage');
+  for (let i = 0; i < messages.length; i++) {
+    if (messages[i].id === messageId) {
+      messages[i].starred = true;
+    }
+  }
+  render();
+}
+
+function onUnstarMessage(messageId) {
+  console.log('inside onUnstarMessage');
+  for (let i = 0; i < messages.length; i++) {
+    if (messages[i].id === messageId) {
+      messages[i].starred = false;
+    }
+  }
+  render();
+}
+
+function onSelectMessage(messageId) {
+  //selected = true;
+  render();
+}
+
+function onDeselectMessage(messageId) {
+  //selected = false;
+  render();
+}

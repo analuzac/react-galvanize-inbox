@@ -14,6 +14,11 @@ storiesOf('MessageComponent', module)
         starred: false,
         labels: []
       }}
+      onMarkAsReadMessage={messageId => console.log(messageId)}
+      onSelectMessage={messageId => console.log(messageId)}
+      onDeselectMessage={messageId => console.log(messageId)}
+      onStarMessage={messageId => console.log(messageId)}
+      onUnstarMessage={messageId => console.log(messageId)}
     />
   )
   .add('Message: Read (unstarred)', () =>
@@ -27,6 +32,11 @@ storiesOf('MessageComponent', module)
         starred: false,
         labels: []
       }}
+      onMarkAsReadMessage={messageId => console.log(messageId)}
+      onSelectMessage={messageId => console.log(messageId)}
+      onDeselectMessage={messageId => console.log(messageId)}
+      onStarMessage={messageId => console.log(messageId)}
+      onUnstarMessage={messageId => console.log(messageId)}
     />
   )
   .add('Message: Selected', () =>
@@ -40,6 +50,11 @@ storiesOf('MessageComponent', module)
         starred: false,
         labels: []
       }}
+      onMarkAsReadMessage={messageId => console.log(messageId)}
+      onSelectMessage={messageId => console.log(messageId)}
+      onDeselectMessage={messageId => console.log(messageId)}
+      onStarMessage={messageId => console.log(messageId)}
+      onUnstarMessage={messageId => console.log(messageId)}
     />
   )
   .add('Messeage: Starred', () =>
@@ -53,6 +68,11 @@ storiesOf('MessageComponent', module)
         starred: true,
         labels: []
       }}
+      onMarkAsReadMessage={messageId => console.log(messageId)}
+      onSelectMessage={messageId => console.log(messageId)}
+      onDeselectMessage={messageId => console.log(messageId)}
+      onStarMessage={messageId => console.log(messageId)}
+      onUnstarMessage={messageId => console.log(messageId)}
     />
   )
   .add('Message: With Labels', () =>
@@ -66,6 +86,11 @@ storiesOf('MessageComponent', module)
         starred: false,
         labels: ['dev', 'personal']
       }}
+      onMarkAsReadMessage={messageId => console.log(messageId)}
+      onSelectMessage={messageId => console.log(messageId)}
+      onDeselectMessage={messageId => console.log(messageId)}
+      onStarMessage={messageId => console.log(messageId)}
+      onUnstarMessage={messageId => console.log(messageId)}
     />
   );
 // .add('Message: Expanded', () =>
