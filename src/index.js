@@ -90,8 +90,8 @@ function render() {
       onRemoveLabelSelectedMessages={onRemoveLabelSelectedMessages}
       onDeleteSelectedMessages={onDeleteSelectedMessages}
       onOpenComposeForm={onOpenComposeForm}
-      onSubmit={onSubmit}
-      onCancel={onCancel}
+      onComposeFormSubmit={onComposeFormSubmit}
+      onComposeFormCancel={onComposeFormCancel}
     />,
     document.getElementById('root')
   );
@@ -228,6 +228,6 @@ function onOpenComposeForm() {
   render();
 }
 
-function onSubmit() {}
+function onComposeFormSubmit(subject, body) {}
 
-function onCancel() {}
+function onComposeFormCancel() {}

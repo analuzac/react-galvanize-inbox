@@ -1,8 +1,25 @@
 import React from 'react';
 
-export default function ComposeFormComponent({ onSubmit, onCancel }) {
-  onSubmit = { onSubmit };
-  onCancel = { onCancel };
+export default function ComposeFormComponent({
+  onComposeFormSubmit,
+  onComposeFormCancel
+}) {
+  function handleOnSubmit(event) {
+    const $onSubmit = event.target;
+    console.log($onSubmit);
+    console.log('touched SUBMIT button');
+    let subject = 'Aloha';
+    let body = 'Wish I was in Hawaii';
+    onComposeFormSubmit(subject, body);
+  }
+
+  function handleOnCancel(event) {
+    const $onCancel = event.target;
+    console.log($onCancel);
+    console.log('touched CANCEL button');
+    onComposeFormCancel();
+  }
+
   return (
     <form className="form-horizontal well">
       <div className="form-group">
@@ -34,7 +51,18 @@ export default function ComposeFormComponent({ onSubmit, onCancel }) {
       </div>
       <div className="form-group">
         <div className="col-sm-8 col-sm-offset-2">
-          <input type="submit" value="Send" className="btn btn-primary" />
+          <input
+            type="submit"
+            value="Send"
+            className="btn btn-primary"
+            onClick={handleOnSubmit}
+          />
+          <input
+            type="submit"
+            value="Cancel"
+            className="btn btn-primary"
+            onClick={handleOnCancel}
+          />
         </div>
       </div>
     </form>
