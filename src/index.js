@@ -85,6 +85,8 @@ function render() {
       onMarkAsReadSelectedMessages={onMarkAsReadSelectedMessages}
       onMarkAsUnreadSelectedMessages={onMarkAsUnreadSelectedMessages}
       onApplyLabelSelectedMessages={onApplyLabelSelectedMessages}
+      onRemoveLabelSelectedMessages={onRemoveLabelSelectedMessages}
+      onDeleteSelectedMessages={onDeleteSelectedMessages}
     />,
     document.getElementById('root')
   );
@@ -185,6 +187,34 @@ function onApplyLabelSelectedMessages(label) {
         } else {
           messages[i].labels.push(label);
         }
+      }
+    }
+  }
+  render();
+}
+
+function onRemoveLabelSelectedMessages(label) {
+  for (let j = 0; j < selectedMessageIds.length; j++) {
+    for (let i = 0; i < messages.length; i++) {
+      if (messages[i].id === selectedMessageIds[j]) {
+        console.log(messages[i]);
+        console.log(selectedMessageIds[j]);
+        if (messages[i].labels.includes(label)) {
+          messages[i].labels.splice(messages[i].labels.indexOf(label), 1);
+        }
+      }
+    }
+  }
+  render();
+}
+
+function onDeleteSelectedMessages() {
+  for (let j = 0; j < selectedMessageIds.length; j++) {
+    for (let i = 0; i < messages.length; i++) {
+      if (messages[i].id === selectedMessageIds[j]) {
+        // console.log(messages[i]);
+        // console.log(selectedMessageIds[j]);
+        messages.splice(messages.indexOf(messages[i]), 1);
       }
     }
   }

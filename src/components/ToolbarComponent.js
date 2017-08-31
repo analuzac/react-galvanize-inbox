@@ -21,8 +21,6 @@ function theBtn(count) {
 
 // onDeleteSelectedMessages
 
-// onRemoveLabelSelectedMessages
-
 export default function ToolbarComponent({
   messages,
   selectedMessageCount,
@@ -31,7 +29,9 @@ export default function ToolbarComponent({
   onMarkAsUnreadSelectedMessages,
   onSelectAllMessages,
   onDeselectAllMessages,
-  onApplyLabelSelectedMessages
+  onApplyLabelSelectedMessages,
+  onRemoveLabelSelectedMessages,
+  onDeleteSelectedMessages
 }) {
   function handleClickPlus(event) {
     const $plus = event.target;
@@ -72,6 +72,21 @@ export default function ToolbarComponent({
     console.log('clicked APPLY LABEL box');
     let label = $applyLabel.value;
     onApplyLabelSelectedMessages(label);
+  }
+
+  function handleRemoveLabel(event) {
+    const $removeLabel = event.target;
+    console.log($removeLabel.value);
+    console.log('clicked REMOVE LABEL box');
+    let label = $removeLabel.value;
+    onRemoveLabelSelectedMessages(label);
+  }
+
+  function handleTrash(event) {
+    const $trashButton = event.target;
+    console.log($trashButton);
+    console.log('touched TRASH button');
+    onDeleteSelectedMessages();
   }
 
   return (
@@ -116,14 +131,16 @@ export default function ToolbarComponent({
           <option value="gschool">gschool</option>
         </select>
 
-        <select className="form-control label-select">
+        <select
+          className="form-control label-select"
+          onChange={handleRemoveLabel}>
           <option>Remove label</option>
           <option value="dev">dev</option>
           <option value="personal">personal</option>
           <option value="gschool">gschool</option>
         </select>
 
-        <button className="btn btn-default">
+        <button className="btn btn-default" onClick={handleTrash}>
           <i className="fa fa-trash-o" />
         </button>
       </div>

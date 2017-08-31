@@ -17,7 +17,9 @@ export default function InboxPage({
   onDeselectAllMessages,
   onMarkAsReadSelectedMessages,
   onMarkAsUnreadSelectedMessages,
-  onApplyLabelSelectedMessages
+  onApplyLabelSelectedMessages,
+  onRemoveLabelSelectedMessages,
+  onDeleteSelectedMessages
 }) {
   return (
     <div className="InboxPage">
@@ -30,6 +32,8 @@ export default function InboxPage({
           onMarkAsReadSelectedMessages={onMarkAsReadSelectedMessages}
           onMarkAsUnreadSelectedMessages={onMarkAsUnreadSelectedMessages}
           onApplyLabelSelectedMessages={onApplyLabelSelectedMessages}
+          onRemoveLabelSelectedMessages={onRemoveLabelSelectedMessages}
+          onDeleteSelectedMessages={onDeleteSelectedMessages}
         />
         <MessagesComponent
           messages={messages}
