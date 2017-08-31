@@ -73,6 +73,7 @@ export default function ToolbarComponent({
     console.log('clicked APPLY LABEL box');
     let label = $applyLabel.value;
     onApplyLabelSelectedMessages(label);
+    $applyLabel.value = 'Apply label';
   }
 
   function handleRemoveLabel(event) {
@@ -81,6 +82,7 @@ export default function ToolbarComponent({
     console.log('clicked REMOVE LABEL box');
     let label = $removeLabel.value;
     onRemoveLabelSelectedMessages(label);
+    $removeLabel.value = 'Remove label';
   }
 
   function handleTrash(event) {
