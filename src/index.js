@@ -231,16 +231,17 @@ function onOpenComposeForm() {
 function onComposeFormSubmit(subject, body) {
   console.log(subject);
   console.log(body);
-  // let newMessage = {
-  //   id: 9,
-  //   subject: subject,
-  //   read: false,
-  //   starred: false,
-  //   labels: []
-  // };
-  // console.log(newMessage);
-  // messages.push({ newMessage });
-  // render();
+  let newMessage = {
+    id: messages.length + 1,
+    subject: subject,
+    read: false,
+    starred: false,
+    labels: []
+  };
+  console.log(newMessage);
+  messages.unshift(newMessage);
+  shouldShowComposeForm = false;
+  render();
 }
 
 function onComposeFormCancel() {
