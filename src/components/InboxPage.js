@@ -12,7 +12,12 @@ export default function InboxPage({
   onUnstarMessage,
   onSelectMessage,
   onDeselectMessage,
-  onMarkAsReadMessage
+  onMarkAsReadMessage,
+  onSelectAllMessages,
+  onDeselectAllMessages,
+  onMarkAsReadSelectedMessages,
+  onMarkAsUnreadSelectedMessages,
+  onApplyLabelSelectedMessages
 }) {
   return (
     <div className="InboxPage">
@@ -20,6 +25,11 @@ export default function InboxPage({
         <ToolbarComponent
           messages={messages}
           selectedMessageCount={selectedMessageIds && selectedMessageIds.length}
+          onSelectAllMessages={onSelectAllMessages}
+          onDeselectAllMessages={onDeselectAllMessages}
+          onMarkAsReadSelectedMessages={onMarkAsReadSelectedMessages}
+          onMarkAsUnreadSelectedMessages={onMarkAsUnreadSelectedMessages}
+          onApplyLabelSelectedMessages={onApplyLabelSelectedMessages}
         />
         <MessagesComponent
           messages={messages}

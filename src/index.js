@@ -80,6 +80,11 @@ function render() {
       onSelectMessage={onSelectMessage}
       onDeselectMessage={onDeselectMessage}
       onMarkAsReadMessage={onMarkAsReadMessage}
+      onSelectAllMessages={onSelectAllMessages}
+      onDeselectAllMessages={onDeselectAllMessages}
+      onMarkAsReadSelectedMessages={onMarkAsReadSelectedMessages}
+      onMarkAsUnreadSelectedMessages={onMarkAsUnreadSelectedMessages}
+      onApplyLabelSelectedMessages={onApplyLabelSelectedMessages}
     />,
     document.getElementById('root')
   );
@@ -127,5 +132,61 @@ function onSelectMessage(messageId) {
 function onDeselectMessage(messageId) {
   selectedMessageIds.splice(selectedMessageIds.indexOf(messageId), 1);
   console.log(selectedMessageIds);
+  render();
+}
+
+// onOpenComposeForm(){
+//
+// }
+
+function onSelectAllMessages() {
+  selectedMessageIds = messages.map(message => message.id);
+  render();
+}
+
+function onDeselectAllMessages() {
+  selectedMessageIds = [];
+  render();
+}
+
+function onMarkAsReadSelectedMessages() {
+  //make selected messages turn read
+  selectedMessageIds = messages.map(message => onMarkAsReadMessage(message.id));
+  //render();
+}
+
+//Helper function for onMarkAsUnreadSelectedMessages
+function onMarkAsUnreadMessage(messageId) {
+  console.log('inside onMarkAsReadMessage');
+  for (let i = 0; i < messages.length; i++) {
+    if (messages[i].id === messageId) {
+      messages[i].read = false;
+    }
+  }
+  render();
+}
+
+function onMarkAsUnreadSelectedMessages() {
+  //make selected messages turn read
+  selectedMessageIds = messages.map(message =>
+    onMarkAsUnreadMessage(message.id)
+  );
+  //render();
+}
+
+function onApplyLabelSelectedMessages(label) {
+  for (let j = 0; j < selectedMessageIds.length; j++) {
+    for (let i = 0; i < messages.length; i++) {
+      if (messages[i].id === selectedMessageIds[j]) {
+        console.log(messages[i]);
+        console.log(selectedMessageIds[j]);
+        if (messages[i].labels.includes(label)) {
+          //nothing happens
+        } else {
+          messages[i].labels.push(label);
+        }
+      }
+    }
+  }
   render();
 }

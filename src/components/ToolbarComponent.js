@@ -19,14 +19,19 @@ function theBtn(count) {
   }
 }
 
-onSelectAllMessages;
+// onDeleteSelectedMessages
+
+// onRemoveLabelSelectedMessages
 
 export default function ToolbarComponent({
   messages,
   selectedMessageCount,
   onOpenComposeForm,
   onMarkAsReadSelectedMessages,
-  onMarkAsUnreadSelectedMessages
+  onMarkAsUnreadSelectedMessages,
+  onSelectAllMessages,
+  onDeselectAllMessages,
+  onApplyLabelSelectedMessages
 }) {
   function handleClickPlus(event) {
     const $plus = event.target;
@@ -39,14 +44,34 @@ export default function ToolbarComponent({
     const $readButton = event.target;
     console.log($readButton);
     console.log('touched MARK AS READ button');
-    //onMarkAsReadSelectedMessages();
+    onMarkAsReadSelectedMessages();
   }
 
   function handleClickUnreadButton(event) {
     const $unreadButton = event.target;
     console.log($unreadButton);
     console.log('touched MARK AS UNREAD button');
-    //onMarkAsUnreadSelectedMessages();
+    onMarkAsUnreadSelectedMessages();
+  }
+
+  function handleSelectAllMessages(event) {
+    const $selectAll = event.target;
+    console.log($selectAll);
+    console.log('clicked SELECT box');
+
+    if (selectedMessageCount < messages.length) {
+      onSelectAllMessages();
+    } else {
+      onDeselectAllMessages();
+    }
+  }
+
+  function handleApplyLabel(event) {
+    const $applyLabel = event.target;
+    console.log($applyLabel.value);
+    console.log('clicked APPLY LABEL box');
+    let label = $applyLabel.value;
+    onApplyLabelSelectedMessages(label);
   }
 
   return (
@@ -62,7 +87,10 @@ export default function ToolbarComponent({
         </a>
 
         <button className="btn btn-default">
-          <i className={theSquare(messages, selectedMessageCount)} />
+          <i
+            className={theSquare(messages, selectedMessageCount)}
+            onClick={handleSelectAllMessages}
+          />
         </button>
 
         <button
@@ -79,7 +107,9 @@ export default function ToolbarComponent({
           Mark As Unread
         </button>
 
-        <select className="form-control label-select">
+        <select
+          className="form-control label-select"
+          onChange={handleApplyLabel}>
           <option>Apply label</option>
           <option value="dev">dev</option>
           <option value="personal">personal</option>
