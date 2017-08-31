@@ -19,6 +19,16 @@ function theBtn(count) {
   }
 }
 
+function unreadMessages(messages) {
+  let unread = 0;
+  for (let i = 0; i < messages.length; i++) {
+    if (messages[i].read === false) {
+      unread = unread + 1;
+    }
+  }
+  return unread;
+}
+
 export default function ToolbarComponent({
   messages,
   selectedMessageCount,
@@ -91,7 +101,7 @@ export default function ToolbarComponent({
     <div className="row toolbar">
       <div className="col-md-12">
         <p className="pull-right">
-          <span className="badge badge">2</span>
+          <span className="badge badge">{unreadMessages(messages)}</span>
           unread messages
         </p>
 

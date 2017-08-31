@@ -228,6 +228,13 @@ function onOpenComposeForm() {
   render();
 }
 
-function onComposeFormSubmit(subject, body) {}
+function onComposeFormSubmit(subject, body) {
+  console.log(subject);
+  console.log(body);
+}
 
-function onComposeFormCancel() {}
+function onComposeFormCancel() {
+  console.log('made it to onComposeFormCancel');
+  shouldShowComposeForm = false;
+  render();
+}
