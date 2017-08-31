@@ -69,12 +69,14 @@ let messages = [
 
 let selectedMessageIds = [];
 
+let shouldShowComposeForm = false;
+
 function render() {
   ReactDOM.render(
     <InboxPage
       messages={messages}
       selectedMessageIds={selectedMessageIds}
-      showComposeForm={true}
+      showComposeForm={shouldShowComposeForm}
       onStarMessage={onStarMessage}
       onUnstarMessage={onUnstarMessage}
       onSelectMessage={onSelectMessage}
@@ -87,6 +89,9 @@ function render() {
       onApplyLabelSelectedMessages={onApplyLabelSelectedMessages}
       onRemoveLabelSelectedMessages={onRemoveLabelSelectedMessages}
       onDeleteSelectedMessages={onDeleteSelectedMessages}
+      onOpenComposeForm={onOpenComposeForm}
+      onSubmit={onSubmit}
+      onCancel={onCancel}
     />,
     document.getElementById('root')
   );
@@ -136,10 +141,6 @@ function onDeselectMessage(messageId) {
   console.log(selectedMessageIds);
   render();
 }
-
-// onOpenComposeForm(){
-//
-// }
 
 function onSelectAllMessages() {
   selectedMessageIds = messages.map(message => message.id);
@@ -220,3 +221,13 @@ function onDeleteSelectedMessages() {
   }
   render();
 }
+
+function onOpenComposeForm() {
+  console.log('made it to onOpenComposeForm inside index.js');
+  shouldShowComposeForm = true;
+  render();
+}
+
+function onSubmit() {}
+
+function onCancel() {}

@@ -19,27 +19,18 @@ function theBtn(count) {
   }
 }
 
-// onDeleteSelectedMessages
-
 export default function ToolbarComponent({
   messages,
   selectedMessageCount,
-  onOpenComposeForm,
   onMarkAsReadSelectedMessages,
   onMarkAsUnreadSelectedMessages,
   onSelectAllMessages,
   onDeselectAllMessages,
   onApplyLabelSelectedMessages,
   onRemoveLabelSelectedMessages,
-  onDeleteSelectedMessages
+  onDeleteSelectedMessages,
+  onOpenComposeForm
 }) {
-  function handleClickPlus(event) {
-    const $plus = event.target;
-    console.log($plus);
-    console.log('touched PLUS button');
-    //onOpenComposeForm();
-  }
-
   function handleClickReadButton(event) {
     const $readButton = event.target;
     console.log($readButton);
@@ -87,6 +78,13 @@ export default function ToolbarComponent({
     console.log($trashButton);
     console.log('touched TRASH button');
     onDeleteSelectedMessages();
+  }
+
+  function handleClickPlus(event) {
+    const $plus = event.target;
+    console.log($plus);
+    console.log('touched PLUS button');
+    onOpenComposeForm();
   }
 
   return (

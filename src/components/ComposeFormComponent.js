@@ -1,6 +1,8 @@
 import React from 'react';
 
-export default function ComposeFormComponent() {
+export default function ComposeFormComponent({ onSubmit, onCancel }) {
+  onSubmit = { onSubmit };
+  onCancel = { onCancel };
   return (
     <form className="form-horizontal well">
       <div className="form-group">
