@@ -105,10 +105,12 @@ export default class App extends Component {
   //   });
   // }
 
-  _markAsReadMessage = messageId => {
+  _markAsReadMessage = newMessageId => {
     this.setState(prevState => {
       const newMessages = prevState.messages.slice(0);
-      newMessages.find(newMessage => newMessage.id === messageId).read = true;
+      newMessages.find(
+        newMessage => newMessage.id === newMessageId
+      ).read = true;
       return { messages: newMessages };
     });
   };
@@ -152,43 +154,50 @@ export default class App extends Component {
 
   _selectAllMessages = () => {
     this.setState(prevState => {
-      let newSelectedMessageIds = prevState.selectedMessageIds.slice(0);
-      newSelectedMessageIds = messages.map(message => message.id);
+      //let newSelectedMessageIds = prevState.selectedMessageIds.slice(0);
+      //Here I don't need to do line above because map creates new array
+      //and I don't need the previous values of selected messages ids
+      let newSelectedMessageIds = messages.map(message => message.id);
       return { selectedMessageIds: newSelectedMessageIds };
     });
   };
 
   _deselectAllMessages = () => {
     this.setState(prevState => {
-      let newSelectedMessageIds = prevState.selectedMessageIds.slice(0);
-      newSelectedMessageIds = [];
+      //let newSelectedMessageIds = prevState.selectedMessageIds.slice(0);
+      //Here I don't need to do line above because I don't need the
+      //previous values of selected messages ids
+      let newSelectedMessageIds = [];
       return { selectedMessageIds: newSelectedMessageIds };
     });
   };
 
   _markAsReadSelectedMessages = () => {
-    this.setState(prevState => {
-      let newMessages = prevState.messages.slice(0);
-      newMessages.map(message => this._markAsReadMessage(message.id));
-      return { messages: newMessages };
-    });
+    //first checkout which messages have been selected in array selectedMessageIds
+    //second use method markAsRead to make selected messages be read
+    //note that markAsReadMessage takes care of the state so we don't need
+    //to set the state here
+    this.state.selectedMessageIds.forEach(messageId =>
+      this._markAsReadMessage(messageId)
+    );
   };
 
   //Helper function for _markAsUnreadSelectedMessages
-  _markAsUnReadMessage = messageId => {
+  _markAsUnreadMessage = newMessageId => {
     this.setState(prevState => {
       const newMessages = prevState.messages.slice(0);
-      newMessages.find(newMessage => newMessage.id === messageId).read = false;
-      return { newMessages };
+      newMessages.find(
+        newMessage => newMessage.id === newMessageId
+      ).read = false;
+      return { messages: newMessages };
     });
   };
 
   _markAsUnreadSelectedMessages = () => {
-    this.setState(prevState => {
-      let newMessages = prevState.messages.slice(0);
-      newMessages.map(message => this._markAsUnreadMessage(message.id));
-      return { messages: newMessages };
-    });
+    //Same logic as markAsReadMessage above
+    this.state.selectedMessageIds.forEach(messageId =>
+      this._markAsUnreadMessage(messageId)
+    );
   };
 
   _applyLabelSelectedMessages = label => {
@@ -238,17 +247,19 @@ export default class App extends Component {
   _deleteSelectedMessages = () => {
     this.setState(prevState => {
       const newMessages = prevState.messages.slice(0);
-      const newSelectedMessageIds = prevState.selectedMessageIds.slice(0);
-      for (let j = 0; j < newSelectedMessageIds.length; j++) {
+      for (let j = 0; j < this.state.selectedMessageIds.length; j++) {
         for (let i = 0; i < newMessages.length; i++) {
-          if (newMessages[i].id === newSelectedMessageIds[j]) {
+          if (newMessages[i].id === this.state.selectedMessageIds[j]) {
             // console.log(messages[i]);
             // console.log(selectedMessageIds[j]);
             newMessages.splice(newMessages.indexOf(newMessages[i]), 1);
           }
         }
       }
-      return { messages: newMessages };
+      return {
+        messages: newMessages,
+        selectedMessageIds: []
+      };
     });
   };
 
@@ -261,6 +272,7 @@ export default class App extends Component {
   };
 
   _composeFormSubmit = ({ subject, body }) => {
+    //debugger;
     console.log(`this is the subject:${subject}`);
     this.setState(prevState => {
       let newMessages = prevState.messages.slice(0);

@@ -13,7 +13,7 @@ export default function ComposeFormComponent({
     const body = $form.body.value.trim();
     console.log(subject);
     console.log(body);
-    onComposeFormSubmit(subject, body);
+    onComposeFormSubmit({ subject, body });
   }
 
   function handleOnCancel(event) {
