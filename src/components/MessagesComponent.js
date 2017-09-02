@@ -10,7 +10,6 @@ export default function MessagesComponent({
   onDeselectMessage,
   onMarkAsReadMessage
 }) {
-  console.log(messages);
   return (
     <div>
       {messages.map(message =>
