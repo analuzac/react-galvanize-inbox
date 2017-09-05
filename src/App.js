@@ -1,12 +1,16 @@
 import React, { Component } from 'react';
 import InboxPage from './components/InboxPage';
-import getMessages from './requests/getMessages';
+import getMessages from './api/getMessages';
+import updateMessage from './api/updateMessage';
+import deleteMessage from './api/deleteMessage';
+import createMessage from './api/createMessage';
 
 export default class App extends Component {
   state = {
     messages: [],
     selectedMessageIds: [],
     shouldShowComposeForm: false
+    // showApiError: false
   };
 
   componentDidMount() {
@@ -42,32 +46,62 @@ export default class App extends Component {
   }
 
   _markAsReadMessage = newMessageId => {
-    this.setState(prevState => {
-      const newMessages = prevState.messages.slice(0);
-      newMessages.find(
-        newMessage => newMessage.id === newMessageId
-      ).read = true;
-      return { messages: newMessages };
+    let changes = {
+      fields: {
+        read: true
+      }
+    };
+    console.log(changes);
+    console.log(newMessageId);
+    //making changes to API with updateMessage
+    updateMessage(newMessageId, changes).then(messages => {
+      this.setState(prevState => {
+        const newMessages = prevState.messages.slice(0);
+        newMessages.find(
+          newMessage => newMessage.id === newMessageId
+        ).read = true;
+        return { messages: newMessages };
+      });
     });
   };
 
   _starMessage = messageId => {
-    this.setState(prevState => {
-      const newMessages = prevState.messages.slice(0);
-      newMessages.find(
-        newMessage => newMessage.id === messageId
-      ).starred = true;
-      return { messages: newMessages };
+    let changes = {
+      fields: {
+        starred: true
+      }
+    };
+    console.log(changes);
+    console.log(messageId);
+    //making changes to API with updateMessage
+    updateMessage(messageId, changes).then(messages => {
+      this.setState(prevState => {
+        const newMessages = prevState.messages.slice(0);
+        newMessages.find(
+          newMessage => newMessage.id === messageId
+        ).starred = true;
+        return { messages: newMessages };
+      });
     });
   };
 
   _unstarMessage = messageId => {
-    this.setState(prevState => {
-      const newMessages = prevState.messages.slice(0);
-      newMessages.find(
-        newMessage => newMessage.id === messageId
-      ).starred = false;
-      return { messages: newMessages };
+    let changes = {
+      fields: {
+        starred: false
+      }
+    };
+    console.log(changes);
+    console.log(messageId);
+    //making changes to API with updateMessage
+    updateMessage(messageId, changes).then(messages => {
+      this.setState(prevState => {
+        const newMessages = prevState.messages.slice(0);
+        newMessages.find(
+          newMessage => newMessage.id === messageId
+        ).starred = false;
+        return { messages: newMessages };
+      });
     });
   };
 
@@ -122,12 +156,22 @@ export default class App extends Component {
 
   //Helper function for _markAsUnreadSelectedMessages
   _markAsUnreadMessage = newMessageId => {
-    this.setState(prevState => {
-      const newMessages = prevState.messages.slice(0);
-      newMessages.find(
-        newMessage => newMessage.id === newMessageId
-      ).read = false;
-      return { messages: newMessages };
+    let changes = {
+      fields: {
+        read: false
+      }
+    };
+    console.log(changes);
+    console.log(newMessageId);
+    //making changes to API with updateMessage
+    updateMessage(newMessageId, changes).then(messages => {
+      this.setState(prevState => {
+        const newMessages = prevState.messages.slice(0);
+        newMessages.find(
+          newMessage => newMessage.id === newMessageId
+        ).read = false;
+        return { messages: newMessages };
+      });
     });
   };
 
@@ -188,8 +232,11 @@ export default class App extends Component {
       for (let j = 0; j < this.state.selectedMessageIds.length; j++) {
         for (let i = 0; i < newMessages.length; i++) {
           if (newMessages[i].id === this.state.selectedMessageIds[j]) {
-            // console.log(messages[i]);
-            // console.log(selectedMessageIds[j]);
+            console.log(newMessages[i].id);
+
+            //making changes to API
+            deleteMessage(newMessages[i].id);
+
             newMessages.splice(newMessages.indexOf(newMessages[i]), 1);
           }
         }
@@ -210,22 +257,39 @@ export default class App extends Component {
   };
 
   _composeFormSubmit = ({ subject, body }) => {
-    //debugger;
     console.log(`this is the subject:${subject}`);
-    this.setState(prevState => {
-      let newMessages = prevState.messages.slice(0);
-      let oneMessage = {
-        id: newMessages.length + 1,
+    let testMessage = {
+      fields: {
+        // id: this.state.messages.length + 1,
         subject: subject,
         read: false,
         starred: false,
-        labels: []
-      };
-      newMessages.unshift(oneMessage);
-      return {
-        messages: newMessages,
-        shouldShowComposeForm: false
-      };
+        labels: 'new'
+      }
+    };
+    console.log(testMessage);
+    //making changes to API with createMessage
+    createMessage(testMessage).then(message => {
+      console.log(message);
+      this.setState(prevState => {
+        //let newMessage = prevState.message.slice(0);
+        let newMessages = prevState.messages.slice(0);
+        //
+        // let oneMessage = {
+        //   // id: newMessages.length + 1,
+        //   subject: subject,
+        //   read: false,
+        //   starred: false,
+        //   labels: []
+        // };
+        // newMessages.unshift(oneMessage);
+        newMessages.unshift(message);
+
+        return {
+          messages: newMessages,
+          shouldShowComposeForm: false
+        };
+      });
     });
   };
 }

@@ -11,8 +11,8 @@ export default function ComposeFormComponent({
     console.log('touched SUBMIT button');
     const subject = $form.subject.value.trim();
     const body = $form.body.value.trim();
-    console.log(subject);
-    console.log(body);
+    // console.log(subject);
+    // console.log(body);
     onComposeFormSubmit({ subject, body });
   }
 
