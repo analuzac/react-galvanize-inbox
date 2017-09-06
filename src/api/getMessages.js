@@ -7,13 +7,18 @@ export default function getMessages() {
     }
   })
     .then(response => response.json())
-    .then(data =>
-      data.records.map(record => ({
-        id: record.id,
-        subject: record.fields.subject,
-        read: record.fields.read,
-        starred: record.fields.starred,
-        labels: record.fields.labels.split(',')
-      }))
-    );
+    .then(data => {
+      return data.records.map(record => {
+        if (!record.fields.labels) {
+          record.fields.labels = '';
+        }
+        return {
+          id: record.id,
+          subject: record.fields.subject,
+          read: record.fields.read,
+          starred: record.fields.starred,
+          labels: record.fields.labels.split(',')
+        };
+      });
+    });
 }

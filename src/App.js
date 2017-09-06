@@ -9,8 +9,8 @@ export default class App extends Component {
   state = {
     messages: [],
     selectedMessageIds: [],
-    shouldShowComposeForm: false
-    // showApiError: false
+    shouldShowComposeForm: false,
+    showApiError: false
   };
 
   componentDidMount() {
@@ -51,8 +51,6 @@ export default class App extends Component {
         read: true
       }
     };
-    console.log(changes);
-    console.log(newMessageId);
     //making changes to API with updateMessage
     updateMessage(newMessageId, changes).then(messages => {
       this.setState(prevState => {
@@ -71,8 +69,6 @@ export default class App extends Component {
         starred: true
       }
     };
-    console.log(changes);
-    console.log(messageId);
     //making changes to API with updateMessage
     updateMessage(messageId, changes).then(messages => {
       this.setState(prevState => {
@@ -91,8 +87,6 @@ export default class App extends Component {
         starred: false
       }
     };
-    console.log(changes);
-    console.log(messageId);
     //making changes to API with updateMessage
     updateMessage(messageId, changes).then(messages => {
       this.setState(prevState => {
@@ -106,7 +100,6 @@ export default class App extends Component {
   };
 
   _selectMessage = messageId => {
-    console.log('got into selectMessage');
     this.setState(prevState => {
       const newSelectedMessageIds = prevState.selectedMessageIds.slice(0);
       newSelectedMessageIds.push(messageId);
@@ -161,8 +154,6 @@ export default class App extends Component {
         read: false
       }
     };
-    console.log(changes);
-    console.log(newMessageId);
     //making changes to API with updateMessage
     updateMessage(newMessageId, changes).then(messages => {
       this.setState(prevState => {
@@ -183,68 +174,112 @@ export default class App extends Component {
   };
 
   _applyLabelSelectedMessages = label => {
-    this.setState(prevState => {
-      const newMessages = prevState.messages.slice(0);
-      const newSelectedMessageIds = prevState.selectedMessageIds.slice(0);
-      for (let j = 0; j < newSelectedMessageIds.length; j++) {
-        for (let i = 0; i < newMessages.length; i++) {
-          if (newMessages[i].id === newSelectedMessageIds[j]) {
-            // console.log(newMessages[i]);
-            // console.log(newSelectedMessageIds[j]);
-            if (newMessages[i].labels.includes(label)) {
-              //nothing happens
-            } else {
-              newMessages[i].labels.push(label);
-            }
+    this.state.selectedMessageIds.forEach(messageId => {
+      this.state.messages.forEach(message => {
+        if (messageId === message.id) {
+          if (message.labels.includes(label)) {
+            //nothing happens
+          } else {
+            let labelArray = message.labels;
+            labelArray.push(label);
+            let newLabels = labelArray.join(',');
+            let changes = {
+              fields: {
+                labels: newLabels
+              }
+            };
+            //making changes to API with updateMessage
+            updateMessage(messageId, changes).then(messages => {
+              this.setState(prevState => {
+                const newMessages = prevState.messages.slice(0);
+                const newSelectedMessageIds = prevState.selectedMessageIds.slice(
+                  0
+                );
+                for (let j = 0; j < newSelectedMessageIds.length; j++) {
+                  for (let i = 0; i < newMessages.length; i++) {
+                    if (newMessages[i].id === newSelectedMessageIds[j]) {
+                      if (newMessages[i].labels.includes(label)) {
+                        //nothing happens
+                      } else {
+                        newMessages[i].labels.push(label);
+                      }
+                    }
+                  }
+                }
+
+                return { messages: newMessages };
+              });
+            });
           }
         }
-      }
-
-      return { messages: newMessages };
+      });
     });
   };
 
   _removeLabelSelectedMessages = label => {
-    this.setState(prevState => {
-      const newMessages = prevState.messages.slice(0);
-      const newSelectedMessageIds = prevState.selectedMessageIds.slice(0);
-      for (let j = 0; j < newSelectedMessageIds.length; j++) {
-        for (let i = 0; i < newMessages.length; i++) {
-          if (newMessages[i].id === newSelectedMessageIds[j]) {
-            // console.log(newMessages[i]);
-            // console.log(newSelectedMessageIds[j]);
-            if (newMessages[i].labels.includes(label)) {
-              newMessages[i].labels.splice(
-                newMessages[i].labels.indexOf(label),
-                1
-              );
-            }
+    this.state.selectedMessageIds.forEach(messageId => {
+      this.state.messages.forEach(message => {
+        if (messageId === message.id) {
+          if (message.labels.includes(label)) {
+            let labelArray = message.labels;
+            labelArray.splice(labelArray.indexOf(label), 1);
+            let newLabels = labelArray.join(',');
+            let changes = {
+              fields: {
+                labels: newLabels
+              }
+            };
+            //making changes to API with updateMessage
+            updateMessage(messageId, changes).then(messages => {
+              this.setState(prevState => {
+                const newMessages = prevState.messages.slice(0);
+                const newSelectedMessageIds = prevState.selectedMessageIds.slice(
+                  0
+                );
+                for (let j = 0; j < newSelectedMessageIds.length; j++) {
+                  for (let i = 0; i < newMessages.length; i++) {
+                    if (newMessages[i].id === newSelectedMessageIds[j]) {
+                      if (newMessages[i].labels.includes(label)) {
+                        newMessages[i].labels.splice(
+                          newMessages[i].labels.indexOf(label),
+                          1
+                        );
+                      }
+                    }
+                  }
+                }
+                return { messages: newMessages };
+              });
+            });
           }
         }
-      }
-      return { messages: newMessages };
+      });
     });
   };
 
   _deleteSelectedMessages = () => {
-    this.setState(prevState => {
-      const newMessages = prevState.messages.slice(0);
-      for (let j = 0; j < this.state.selectedMessageIds.length; j++) {
-        for (let i = 0; i < newMessages.length; i++) {
-          if (newMessages[i].id === this.state.selectedMessageIds[j]) {
-            console.log(newMessages[i].id);
-
-            //making changes to API
-            deleteMessage(newMessages[i].id);
-
-            newMessages.splice(newMessages.indexOf(newMessages[i]), 1);
-          }
+    this.state.selectedMessageIds.forEach(messageId => {
+      this.state.messages.forEach(message => {
+        if (messageId === message.id) {
+          //making changes to API with updateMessage
+          deleteMessage(messageId).then(messages => {
+            this.setState(prevState => {
+              const newMessages = prevState.messages.slice(0);
+              for (let j = 0; j < this.state.selectedMessageIds.length; j++) {
+                for (let i = 0; i < newMessages.length; i++) {
+                  if (newMessages[i].id === this.state.selectedMessageIds[j]) {
+                    newMessages.splice(newMessages.indexOf(newMessages[i]), 1);
+                  }
+                }
+              }
+              return {
+                messages: newMessages,
+                selectedMessageIds: []
+              };
+            });
+          });
         }
-      }
-      return {
-        messages: newMessages,
-        selectedMessageIds: []
-      };
+      });
     });
   };
 
@@ -258,33 +293,20 @@ export default class App extends Component {
 
   _composeFormSubmit = ({ subject, body }) => {
     console.log(`this is the subject:${subject}`);
-    let testMessage = {
+    let composedMessage = {
       fields: {
-        // id: this.state.messages.length + 1,
         subject: subject,
         read: false,
         starred: false,
         labels: 'new'
       }
     };
-    console.log(testMessage);
+    console.log(composedMessage);
     //making changes to API with createMessage
-    createMessage(testMessage).then(message => {
-      console.log(message);
+    createMessage(composedMessage).then(message => {
       this.setState(prevState => {
-        //let newMessage = prevState.message.slice(0);
         let newMessages = prevState.messages.slice(0);
-        //
-        // let oneMessage = {
-        //   // id: newMessages.length + 1,
-        //   subject: subject,
-        //   read: false,
-        //   starred: false,
-        //   labels: []
-        // };
-        // newMessages.unshift(oneMessage);
         newMessages.unshift(message);
-
         return {
           messages: newMessages,
           shouldShowComposeForm: false

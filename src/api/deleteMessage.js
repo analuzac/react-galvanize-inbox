@@ -10,11 +10,3 @@ export default function deleteMessage(messageId) {
     }
   ).then(response => response.json());
 }
-
-// componentDidMount() {
-//   getMessages().then(records => {
-//     this.setState({
-//       messages: records
-//     });
-//   });
-// }
