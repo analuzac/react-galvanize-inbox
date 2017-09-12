@@ -82,6 +82,7 @@ export default function MessageComponent({
           <div className="row">
             <div className="col-xs-2">
               <input
+                className="something"
                 type="checkbox"
                 checked={selected === true}
                 onChange={handleChangeCheckbox}
