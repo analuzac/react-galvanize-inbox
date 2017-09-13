@@ -151,4 +151,11 @@ describe('a shallow test', () => {
     fullWrapper_ver3.find('.something').simulate('change');
     expect(onDeselectMessage).toHaveBeenCalled();
   });
+
+  it('Subject rendered ', () => {
+    //console.log('hi : ' + shallowWrapper2.find('a.msg').text());
+    expect(shallowWrapper_ver2.find('a.msg').text()).toEqual(message2.subject);
+  });
+
+  expect(shallowWrapper_ver2).toMatchSnapshot();
 });
