@@ -1,4 +1,7 @@
 import React, { Component } from 'react';
+
+import env from './env';
+
 import InboxPage from './components/InboxPage';
 import getMessages from './api/getMessages';
 import updateMessage from './api/updateMessage';
@@ -6,20 +9,21 @@ import deleteMessage from './api/deleteMessage';
 import createMessage from './api/createMessage';
 
 export default class App extends Component {
-  state = {
-    messages: [],
-    selectedMessageIds: [],
-    shouldShowComposeForm: false,
-    showApiError: false
-  };
+  constructor(props) {
+    super(props);
 
-  componentDidMount() {
-    getMessages().then(records => {
-      this.setState({
-        messages: records
-      });
+    this.state = {
+      messages: [],
+      selectedMessageIds: [],
+      shouldShowComposeForm: false,
+      showApiError: false
+    };
+
+    this.props.store.subscribe(() => {
+      this.setState(this.props.store.getState());
     });
   }
+
   render() {
     return (
       <InboxPage
@@ -45,20 +49,34 @@ export default class App extends Component {
     );
   }
 
-  _markAsReadMessage = newMessageId => {
+  componentDidMount() {
+    //Before Redux:
+    // getMessages().then(records => {
+    //   this.setState({
+    //     messages: records
+    //   });
+    // });
+    getMessages({
+      databaseId: env.AIRTABLE_DATABASE_ID,
+      token: env.AIRTABLE_TOKEN
+    }).then(records => {
+      this.props.store.dispatch({ type: 'GET_MESSAGES', messages: records });
+    });
+  }
+
+  _markAsReadMessage = messageId => {
     let changes = {
       fields: {
         read: true
       }
     };
-    //making changes to API with updateMessage
-    updateMessage(newMessageId, changes).then(messages => {
-      this.setState(prevState => {
-        const newMessages = prevState.messages.slice(0);
-        newMessages.find(
-          newMessage => newMessage.id === newMessageId
-        ).read = true;
-        return { messages: newMessages };
+    updateMessage(messageId, changes, {
+      databaseId: env.AIRTABLE_DATABASE_ID,
+      token: env.AIRTABLE_TOKEN
+    }).then(updatedMessage => {
+      this.props.store.dispatch({
+        type: 'MARK_AS_READ',
+        message: updatedMessage
       });
     });
   };
@@ -69,14 +87,13 @@ export default class App extends Component {
         starred: true
       }
     };
-    //making changes to API with updateMessage
-    updateMessage(messageId, changes).then(messages => {
-      this.setState(prevState => {
-        const newMessages = prevState.messages.slice(0);
-        newMessages.find(
-          newMessage => newMessage.id === messageId
-        ).starred = true;
-        return { messages: newMessages };
+    updateMessage(messageId, changes, {
+      databaseId: env.AIRTABLE_DATABASE_ID,
+      token: env.AIRTABLE_TOKEN
+    }).then(updatedMessage => {
+      this.props.store.dispatch({
+        type: 'STAR_MESSAGE',
+        message: updatedMessage
       });
     });
   };
@@ -87,89 +104,74 @@ export default class App extends Component {
         starred: false
       }
     };
-    //making changes to API with updateMessage
-    updateMessage(messageId, changes).then(messages => {
-      this.setState(prevState => {
-        const newMessages = prevState.messages.slice(0);
-        newMessages.find(
-          newMessage => newMessage.id === messageId
-        ).starred = false;
-        return { messages: newMessages };
+    updateMessage(messageId, changes, {
+      databaseId: env.AIRTABLE_DATABASE_ID,
+      token: env.AIRTABLE_TOKEN
+    }).then(updatedMessage => {
+      this.props.store.dispatch({
+        type: 'UNSTAR_MESSAGE',
+        message: updatedMessage
       });
     });
   };
 
   _selectMessage = messageId => {
-    this.setState(prevState => {
-      const newSelectedMessageIds = prevState.selectedMessageIds.slice(0);
-      newSelectedMessageIds.push(messageId);
-      return { selectedMessageIds: newSelectedMessageIds };
+    this.props.store.dispatch({
+      type: 'SELECT_MESSAGE',
+      messageId
     });
   };
 
   _deselectMessage = messageId => {
-    this.setState(prevState => {
-      const newSelectedMessageIds = prevState.selectedMessageIds.slice(0);
-      newSelectedMessageIds.splice(newSelectedMessageIds.indexOf(messageId), 1);
-      return { selectedMessageIds: newSelectedMessageIds };
+    this.props.store.dispatch({
+      type: 'DESELECT_MESSAGE',
+      messageId
     });
   };
 
   _selectAllMessages = () => {
-    this.setState(prevState => {
-      //let newSelectedMessageIds = prevState.selectedMessageIds.slice(0);
-      //Here I don't need to do line above because map creates new array
-      //and I don't need the previous values of selected messages ids
-      let newSelectedMessageIds = this.state.messages.map(
-        message => message.id
-      );
-      return { selectedMessageIds: newSelectedMessageIds };
+    this.props.store.dispatch({
+      type: 'SELECT_ALL_MESSAGES'
     });
   };
 
   _deselectAllMessages = () => {
-    this.setState(prevState => {
-      //let newSelectedMessageIds = prevState.selectedMessageIds.slice(0);
-      //Here I don't need to do line above because I don't need the
-      //previous values of selected messages ids
-      let newSelectedMessageIds = [];
-      return { selectedMessageIds: newSelectedMessageIds };
+    this.props.store.dispatch({
+      type: 'DESELECT_ALL_MESSAGES'
     });
   };
 
   _markAsReadSelectedMessages = () => {
-    //first checkout which messages have been selected in array selectedMessageIds
-    //second use method markAsRead to make selected messages be read
-    //note that markAsReadMessage takes care of the state so we don't need
-    //to set the state here
-    this.state.selectedMessageIds.forEach(messageId =>
-      this._markAsReadMessage(messageId)
+    this.props.store.getState(
+      this.state.selectedMessageIds.forEach(messageId =>
+        this._markAsReadMessage(messageId)
+      )
     );
   };
 
   //Helper function for _markAsUnreadSelectedMessages
-  _markAsUnreadMessage = newMessageId => {
+  _markAsUnreadMessage = messageId => {
     let changes = {
       fields: {
         read: false
       }
     };
-    //making changes to API with updateMessage
-    updateMessage(newMessageId, changes).then(messages => {
-      this.setState(prevState => {
-        const newMessages = prevState.messages.slice(0);
-        newMessages.find(
-          newMessage => newMessage.id === newMessageId
-        ).read = false;
-        return { messages: newMessages };
+    updateMessage(messageId, changes, {
+      databaseId: env.AIRTABLE_DATABASE_ID,
+      token: env.AIRTABLE_TOKEN
+    }).then(updatedMessage => {
+      this.props.store.dispatch({
+        type: 'MARK_AS_UNREAD',
+        message: updatedMessage
       });
     });
   };
 
   _markAsUnreadSelectedMessages = () => {
-    //Same logic as markAsReadMessage above
-    this.state.selectedMessageIds.forEach(messageId =>
-      this._markAsUnreadMessage(messageId)
+    this.props.store.getState(
+      this.state.selectedMessageIds.forEach(messageId =>
+        this._markAsUnreadMessage(messageId)
+      )
     );
   };
 
@@ -188,26 +190,13 @@ export default class App extends Component {
                 labels: newLabels
               }
             };
-            //making changes to API with updateMessage
-            updateMessage(messageId, changes).then(messages => {
-              this.setState(prevState => {
-                const newMessages = prevState.messages.slice(0);
-                const newSelectedMessageIds = prevState.selectedMessageIds.slice(
-                  0
-                );
-                for (let j = 0; j < newSelectedMessageIds.length; j++) {
-                  for (let i = 0; i < newMessages.length; i++) {
-                    if (newMessages[i].id === newSelectedMessageIds[j]) {
-                      if (newMessages[i].labels.includes(label)) {
-                        //nothing happens
-                      } else {
-                        newMessages[i].labels.push(label);
-                      }
-                    }
-                  }
-                }
-
-                return { messages: newMessages };
+            updateMessage(messageId, changes, {
+              databaseId: env.AIRTABLE_DATABASE_ID,
+              token: env.AIRTABLE_TOKEN
+            }).then(updatedMessage => {
+              this.props.store.dispatch({
+                type: 'APPLY_LABEL_SELECTED_MESSAGES',
+                message: updatedMessage
               });
             });
           }
@@ -229,26 +218,13 @@ export default class App extends Component {
                 labels: newLabels
               }
             };
-            //making changes to API with updateMessage
-            updateMessage(messageId, changes).then(messages => {
-              this.setState(prevState => {
-                const newMessages = prevState.messages.slice(0);
-                const newSelectedMessageIds = prevState.selectedMessageIds.slice(
-                  0
-                );
-                for (let j = 0; j < newSelectedMessageIds.length; j++) {
-                  for (let i = 0; i < newMessages.length; i++) {
-                    if (newMessages[i].id === newSelectedMessageIds[j]) {
-                      if (newMessages[i].labels.includes(label)) {
-                        newMessages[i].labels.splice(
-                          newMessages[i].labels.indexOf(label),
-                          1
-                        );
-                      }
-                    }
-                  }
-                }
-                return { messages: newMessages };
+            updateMessage(messageId, changes, {
+              databaseId: env.AIRTABLE_DATABASE_ID,
+              token: env.AIRTABLE_TOKEN
+            }).then(updatedMessage => {
+              this.props.store.dispatch({
+                type: 'REMOVE_LABEL_SELECTED_MESSAGES',
+                message: updatedMessage
               });
             });
           }
@@ -261,21 +237,13 @@ export default class App extends Component {
     this.state.selectedMessageIds.forEach(messageId => {
       this.state.messages.forEach(message => {
         if (messageId === message.id) {
-          //making changes to API with updateMessage
-          deleteMessage(messageId).then(messages => {
-            this.setState(prevState => {
-              const newMessages = prevState.messages.slice(0);
-              for (let j = 0; j < this.state.selectedMessageIds.length; j++) {
-                for (let i = 0; i < newMessages.length; i++) {
-                  if (newMessages[i].id === this.state.selectedMessageIds[j]) {
-                    newMessages.splice(newMessages.indexOf(newMessages[i]), 1);
-                  }
-                }
-              }
-              return {
-                messages: newMessages,
-                selectedMessageIds: []
-              };
+          deleteMessage(messageId, {
+            databaseId: env.AIRTABLE_DATABASE_ID,
+            token: env.AIRTABLE_TOKEN
+          }).then(wasDeleted => {
+            this.props.store.dispatch({
+              type: 'DELETE_SELECTED_MESSAGES',
+              messageId: message.id
             });
           });
         }
@@ -284,11 +252,17 @@ export default class App extends Component {
   };
 
   _openComposeForm = () => {
-    this.setState({ shouldShowComposeForm: true });
+    this.props.store.dispatch({
+      type: 'OPEN_COMPOSE_FORM',
+      shouldShowComposeForm: true
+    });
   };
 
   _composeFormCancel = () => {
-    this.setState({ shouldShowComposeForm: false });
+    this.props.store.dispatch({
+      type: 'COMPOSE_FORM_CANCEL',
+      shouldShowComposeForm: false
+    });
   };
 
   _composeFormSubmit = ({ subject, body }) => {
@@ -303,14 +277,14 @@ export default class App extends Component {
     };
     console.log(composedMessage);
     //making changes to API with createMessage
-    createMessage(composedMessage).then(message => {
-      this.setState(prevState => {
-        let newMessages = prevState.messages.slice(0);
-        newMessages.unshift(message);
-        return {
-          messages: newMessages,
-          shouldShowComposeForm: false
-        };
+    createMessage(composedMessage, {
+      databaseId: env.AIRTABLE_DATABASE_ID,
+      token: env.AIRTABLE_TOKEN
+    }).then(createdMessage => {
+      this.props.store.dispatch({
+        type: 'COMPOSE_FORM_SUBMIT',
+        shouldShowComposeForm: false,
+        message: createdMessage
       });
     });
   };

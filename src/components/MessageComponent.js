@@ -101,7 +101,12 @@ export default function MessageComponent({
           </div>
         </div>
         <div className="col-xs-11" onClick={handleClickRead}>
-          {renderLabels(message.labels)}
+          {message.labels &&
+            message.labels.map((label, i) =>
+              <span key={i} className="label label-warning">
+                {label}
+              </span>
+            )}
 
           <a href="www.hi.com">
             {message.subject}
