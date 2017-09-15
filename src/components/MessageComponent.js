@@ -63,8 +63,10 @@ export default function MessageComponent({
     event.preventDefault();
     //const $star = event.target;
     //console.log($star.class);
+    //console.log(message, 'ANAAAAA!!!!!!');
     if (message.starred !== true) {
       onStarMessage(message.id);
+      //onStarMessage(message.id, message);
       console.log('turned star ON');
     } else {
       onUnstarMessage(message.id);

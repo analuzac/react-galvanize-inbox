@@ -31,9 +31,7 @@ export default function rootReducer(
         ...currentState,
         messages: currentState.messages.map(
           message =>
-            message.id === action.updatedMessage.id
-              ? action.updatedMessage
-              : message
+            message.id === action.message.id ? action.message : message
         )
       };
     case 'UNSTAR_MESSAGE':

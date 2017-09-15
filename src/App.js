@@ -1,12 +1,18 @@
 import React, { Component } from 'react';
 
-//import env from './env';
-
 import InboxPage from './components/InboxPage';
-import getMessages from './api/getMessages';
-import updateMessage from './api/updateMessage';
-import deleteMessage from './api/deleteMessage';
-import createMessage from './api/createMessage';
+
+import getMessagesProcess from './redux/thunks/getMessagesProcess';
+import updateMessageProcess from './redux/thunks/updateMessageProcess';
+import deleteMessageProcess from './redux/thunks/deleteMessageProcess';
+import createMessageProcess from './redux/thunks/createMessageProcess';
+
+// import env from './env';
+//
+// import getMessages from './api/getMessages';
+// import updateMessage from './api/updateMessage';
+// import deleteMessage from './api/deleteMessage';
+// import createMessage from './api/createMessage';
 
 export default class App extends Component {
   constructor(props) {
@@ -51,47 +57,40 @@ export default class App extends Component {
   }
 
   componentDidMount() {
-    getMessages().then(records => {
-      //   {
-      //   databaseId: env.AIRTABLE_DATABASE_ID,
-      //   token: env.AIRTABLE_TOKEN
-      // }
-      this.props.store.dispatch({ type: 'GET_MESSAGES', messages: records });
-    });
+    this.props.store.dispatch(getMessagesProcess());
   }
 
   _markAsReadMessage = messageId => {
     let changes = {};
     changes.read = true;
-    updateMessage(messageId, changes).then(updatedMessage => {
-      this.props.store.dispatch({
-        type: 'MARK_AS_READ',
-        message: updatedMessage
-      });
-    });
+    let actionType = 'MARK_AS_READ';
+    this.props.store.dispatch(
+      updateMessageProcess(messageId, changes, actionType)
+    );
   };
 
   _starMessage = messageId => {
     let changes = {};
     changes.starred = true;
-    updateMessage(messageId, changes).then(updatedMessage => {
-      console.log(updatedMessage);
-      this.props.store.dispatch({
-        type: 'STAR_MESSAGE',
-        updatedMessage
-      });
-    });
+    let actionType = 'STAR_MESSAGE';
+    this.props.store.dispatch(
+      updateMessageProcess(messageId, changes, actionType)
+    );
   };
+
+  // Future refactor example to combine functions:
+  // toggleStar = messageId => {
+  //
+  //   let changes = {};
+  //   changes.starred = !messageId.starred;
 
   _unstarMessage = messageId => {
     let changes = {};
     changes.starred = false;
-    updateMessage(messageId, changes).then(updatedMessage => {
-      this.props.store.dispatch({
-        type: 'UNSTAR_MESSAGE',
-        message: updatedMessage
-      });
-    });
+    let actionType = 'UNSTAR_MESSAGE';
+    this.props.store.dispatch(
+      updateMessageProcess(messageId, changes, actionType)
+    );
   };
 
   _selectMessage = messageId => {
@@ -132,12 +131,10 @@ export default class App extends Component {
   _markAsUnreadMessage = messageId => {
     let changes = {};
     changes.read = false;
-    updateMessage(messageId, changes).then(updatedMessage => {
-      this.props.store.dispatch({
-        type: 'MARK_AS_UNREAD',
-        message: updatedMessage
-      });
-    });
+    let actionType = 'MARK_AS_UNREAD';
+    this.props.store.dispatch(
+      updateMessageProcess(messageId, changes, actionType)
+    );
   };
 
   _markAsUnreadSelectedMessages = () => {
@@ -162,12 +159,12 @@ export default class App extends Component {
 
           let changes = {};
           changes.labels = newLabels;
-          updateMessage(messageId, changes).then(updatedMessage => {
-            this.props.store.dispatch({
-              type: 'APPLY_LABEL',
-              message: updatedMessage
-            });
-          });
+
+          let actionType = 'APPLY_LABEL';
+
+          this.props.store.dispatch(
+            updateMessageProcess(messageId, changes, actionType)
+          );
         }
       }
     });
@@ -192,12 +189,12 @@ export default class App extends Component {
 
           let changes = {};
           changes.labels = newLabels;
-          updateMessage(messageId, changes).then(updatedMessage => {
-            this.props.store.dispatch({
-              type: 'REMOVE_LABEL_SELECTED_MESSAGES',
-              message: updatedMessage
-            });
-          });
+
+          let actionType = 'REMOVE_LABEL';
+
+          this.props.store.dispatch(
+            updateMessageProcess(messageId, changes, actionType)
+          );
         }
       }
     });
@@ -215,12 +212,7 @@ export default class App extends Component {
     this.state.selectedMessageIds.forEach(messageId => {
       this.state.messages.forEach(message => {
         if (messageId === message.id) {
-          deleteMessage(messageId).then(wasDeleted => {
-            this.props.store.dispatch({
-              type: 'DELETE_SELECTED_MESSAGES',
-              messageId: message.id
-            });
-          });
+          this.props.store.dispatch(deleteMessageProcess(messageId));
         }
       });
     });
@@ -250,14 +242,7 @@ export default class App extends Component {
         labels: 'new'
       }
     };
-    console.log(composedMessage);
-    //making changes to API with createMessage
-    createMessage(composedMessage).then(createdMessage => {
-      this.props.store.dispatch({
-        type: 'COMPOSE_FORM_SUBMIT',
-        shouldShowComposeForm: false,
-        message: createdMessage
-      });
-    });
+    //console.log(composedMessage);
+    this.props.store.dispatch(createMessageProcess(composedMessage));
   };
 }
