@@ -20,7 +20,7 @@ function theBtn(count) {
 }
 
 function unreadMessages(messages) {
-  //console.log(messages);
+  //console.log('inside unreadMessages', messages);
   let unread = 0;
   for (let i = 0; i < messages.length; i++) {
     if (messages[i].read === false) {

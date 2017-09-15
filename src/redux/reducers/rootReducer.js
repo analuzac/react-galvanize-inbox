@@ -31,7 +31,9 @@ export default function rootReducer(
         ...currentState,
         messages: currentState.messages.map(
           message =>
-            message.id === action.message.id ? action.message : message
+            message.id === action.updatedMessage.id
+              ? action.updatedMessage
+              : message
         )
       };
     case 'UNSTAR_MESSAGE':
@@ -47,29 +49,41 @@ export default function rootReducer(
         ...currentState,
         selectedMessageIds: [
           ...currentState.selectedMessageIds,
-          action.messages
+          action.messageId
         ]
       };
     case 'DESELECT_MESSAGE':
       return {
         ...currentState,
         selectedMessageIds: currentState.selectedMessageIds.filter(
-          messageId => messageId !== action.selectedMessageId
+          selectedMessageId => selectedMessageId === action.selectedMessageId
         )
       };
     case 'SELECT_ALL_MESSAGES':
       return {
         ...currentState,
-        selectedMessageIds: currentState.messages.map(
-          message => action.message.id
-        )
+        selectedMessageIds: currentState.messages.map(message => message.id)
       };
     case 'DESELECT_ALL_MESSAGES':
       return { ...currentState, selectedMessageIds: [] };
-    case 'APPLY_LABEL_SELECTED_MESSAGES':
-      return { ...currentState, messages: action.messages };
-    case 'REMOVE_LABEL_SELECTED_MESSAGES':
-      return { ...currentState, messages: action.messages };
+
+    case 'APPLY_LABEL':
+      return {
+        ...currentState,
+        messages: currentState.messages.map(
+          message =>
+            message.id === action.message.id ? action.message : message
+        )
+      };
+    case 'REMOVE_LABEL':
+      return {
+        ...currentState,
+        messages: currentState.messages.map(
+          message =>
+            message.id === action.message.id ? action.message : message
+        )
+      };
+
     case 'DELETE_SELECTED_MESSAGES':
       return {
         ...currentState,

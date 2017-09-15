@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-import env from './env';
+//import env from './env';
 
 import InboxPage from './components/InboxPage';
 import getMessages from './api/getMessages';
@@ -25,6 +25,7 @@ export default class App extends Component {
   }
 
   render() {
+    console.log('this is state', this.state);
     return (
       <InboxPage
         messages={this.state.messages}
@@ -50,30 +51,19 @@ export default class App extends Component {
   }
 
   componentDidMount() {
-    //Before Redux:
-    // getMessages().then(records => {
-    //   this.setState({
-    //     messages: records
-    //   });
-    // });
-    getMessages({
-      databaseId: env.AIRTABLE_DATABASE_ID,
-      token: env.AIRTABLE_TOKEN
-    }).then(records => {
+    getMessages().then(records => {
+      //   {
+      //   databaseId: env.AIRTABLE_DATABASE_ID,
+      //   token: env.AIRTABLE_TOKEN
+      // }
       this.props.store.dispatch({ type: 'GET_MESSAGES', messages: records });
     });
   }
 
   _markAsReadMessage = messageId => {
-    let changes = {
-      fields: {
-        read: true
-      }
-    };
-    updateMessage(messageId, changes, {
-      databaseId: env.AIRTABLE_DATABASE_ID,
-      token: env.AIRTABLE_TOKEN
-    }).then(updatedMessage => {
+    let changes = {};
+    changes.read = true;
+    updateMessage(messageId, changes).then(updatedMessage => {
       this.props.store.dispatch({
         type: 'MARK_AS_READ',
         message: updatedMessage
@@ -82,32 +72,21 @@ export default class App extends Component {
   };
 
   _starMessage = messageId => {
-    let changes = {
-      fields: {
-        starred: true
-      }
-    };
-    updateMessage(messageId, changes, {
-      databaseId: env.AIRTABLE_DATABASE_ID,
-      token: env.AIRTABLE_TOKEN
-    }).then(updatedMessage => {
+    let changes = {};
+    changes.starred = true;
+    updateMessage(messageId, changes).then(updatedMessage => {
+      console.log(updatedMessage);
       this.props.store.dispatch({
         type: 'STAR_MESSAGE',
-        message: updatedMessage
+        updatedMessage
       });
     });
   };
 
   _unstarMessage = messageId => {
-    let changes = {
-      fields: {
-        starred: false
-      }
-    };
-    updateMessage(messageId, changes, {
-      databaseId: env.AIRTABLE_DATABASE_ID,
-      token: env.AIRTABLE_TOKEN
-    }).then(updatedMessage => {
+    let changes = {};
+    changes.starred = false;
+    updateMessage(messageId, changes).then(updatedMessage => {
       this.props.store.dispatch({
         type: 'UNSTAR_MESSAGE',
         message: updatedMessage
@@ -151,15 +130,9 @@ export default class App extends Component {
 
   //Helper function for _markAsUnreadSelectedMessages
   _markAsUnreadMessage = messageId => {
-    let changes = {
-      fields: {
-        read: false
-      }
-    };
-    updateMessage(messageId, changes, {
-      databaseId: env.AIRTABLE_DATABASE_ID,
-      token: env.AIRTABLE_TOKEN
-    }).then(updatedMessage => {
+    let changes = {};
+    changes.read = false;
+    updateMessage(messageId, changes).then(updatedMessage => {
       this.props.store.dispatch({
         type: 'MARK_AS_UNREAD',
         message: updatedMessage
@@ -175,72 +148,74 @@ export default class App extends Component {
     );
   };
 
-  _applyLabelSelectedMessages = label => {
-    this.state.selectedMessageIds.forEach(messageId => {
-      this.state.messages.forEach(message => {
-        if (messageId === message.id) {
-          if (message.labels.includes(label)) {
-            //nothing happens
-          } else {
-            let labelArray = message.labels;
-            labelArray.push(label);
-            let newLabels = labelArray.join(',');
-            let changes = {
-              fields: {
-                labels: newLabels
-              }
-            };
-            updateMessage(messageId, changes, {
-              databaseId: env.AIRTABLE_DATABASE_ID,
-              token: env.AIRTABLE_TOKEN
-            }).then(updatedMessage => {
-              this.props.store.dispatch({
-                type: 'APPLY_LABEL_SELECTED_MESSAGES',
-                message: updatedMessage
-              });
+  //Helper function for _applyLabelSelectedMessages
+  _applyLabel = ({ label, messageId }) => {
+    //debugger;
+    this.state.messages.forEach(message => {
+      if (messageId === message.id) {
+        if (message.labels.includes(label)) {
+          //nothing happens
+        } else {
+          let labelArray = message.labels;
+          labelArray.push(label);
+          let newLabels = labelArray.join(',');
+
+          let changes = {};
+          changes.labels = newLabels;
+          updateMessage(messageId, changes).then(updatedMessage => {
+            this.props.store.dispatch({
+              type: 'APPLY_LABEL',
+              message: updatedMessage
             });
-          }
+          });
         }
-      });
+      }
+    });
+  };
+
+  _applyLabelSelectedMessages = label => {
+    this.props.store.getState(
+      this.state.selectedMessageIds.forEach(messageId =>
+        this._applyLabel({ label, messageId })
+      )
+    );
+  };
+
+  //Helper function for _removeLabelSelectedMessages
+  _removeLabel = ({ label, messageId }) => {
+    this.state.messages.forEach(message => {
+      if (messageId === message.id) {
+        if (message.labels.includes(label)) {
+          let labelArray = message.labels;
+          labelArray.splice(labelArray.indexOf(label), 1);
+          let newLabels = labelArray.join(',');
+
+          let changes = {};
+          changes.labels = newLabels;
+          updateMessage(messageId, changes).then(updatedMessage => {
+            this.props.store.dispatch({
+              type: 'REMOVE_LABEL_SELECTED_MESSAGES',
+              message: updatedMessage
+            });
+          });
+        }
+      }
     });
   };
 
   _removeLabelSelectedMessages = label => {
-    this.state.selectedMessageIds.forEach(messageId => {
-      this.state.messages.forEach(message => {
-        if (messageId === message.id) {
-          if (message.labels.includes(label)) {
-            let labelArray = message.labels;
-            labelArray.splice(labelArray.indexOf(label), 1);
-            let newLabels = labelArray.join(',');
-            let changes = {
-              fields: {
-                labels: newLabels
-              }
-            };
-            updateMessage(messageId, changes, {
-              databaseId: env.AIRTABLE_DATABASE_ID,
-              token: env.AIRTABLE_TOKEN
-            }).then(updatedMessage => {
-              this.props.store.dispatch({
-                type: 'REMOVE_LABEL_SELECTED_MESSAGES',
-                message: updatedMessage
-              });
-            });
-          }
-        }
-      });
-    });
+    this.props.store.getState(
+      this.state.selectedMessageIds.forEach(messageId =>
+        this._removeLabel({ label, messageId })
+      )
+    );
   };
 
   _deleteSelectedMessages = () => {
     this.state.selectedMessageIds.forEach(messageId => {
       this.state.messages.forEach(message => {
         if (messageId === message.id) {
-          deleteMessage(messageId, {
-            databaseId: env.AIRTABLE_DATABASE_ID,
-            token: env.AIRTABLE_TOKEN
-          }).then(wasDeleted => {
+          deleteMessage(messageId).then(wasDeleted => {
             this.props.store.dispatch({
               type: 'DELETE_SELECTED_MESSAGES',
               messageId: message.id
@@ -277,10 +252,7 @@ export default class App extends Component {
     };
     console.log(composedMessage);
     //making changes to API with createMessage
-    createMessage(composedMessage, {
-      databaseId: env.AIRTABLE_DATABASE_ID,
-      token: env.AIRTABLE_TOKEN
-    }).then(createdMessage => {
+    createMessage(composedMessage).then(createdMessage => {
       this.props.store.dispatch({
         type: 'COMPOSE_FORM_SUBMIT',
         shouldShowComposeForm: false,

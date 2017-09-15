@@ -51,10 +51,12 @@ export default function MessageComponent({
     event.preventDefault();
     // const $read = event.target;
     // console.log($read);
-    if (message.read !== true) {
-      onMarkAsReadMessage(message.id);
-      console.log('became READ');
-    }
+    // if (message.read !== true) {
+    console.log('this should be a message id', message);
+    console.log('this is the event', event.target);
+    onMarkAsReadMessage(message.id);
+    console.log('became READ');
+    // }
   }
 
   function handleClickStar(event) {
@@ -101,12 +103,7 @@ export default function MessageComponent({
           </div>
         </div>
         <div className="col-xs-11" onClick={handleClickRead}>
-          {message.labels &&
-            message.labels.map((label, i) =>
-              <span key={i} className="label label-warning">
-                {label}
-              </span>
-            )}
+          {renderLabels(message.labels)}
 
           <a href="www.hi.com">
             {message.subject}
@@ -117,3 +114,11 @@ export default function MessageComponent({
     </div>
   );
 }
+
+// to fix Each child in an array or iterator should have a unique "key" prop.
+// {message.labels &&
+//   message.labels.map((label, i) =>
+//     <span key={i} className="label label-warning">
+//       {label}
+//     </span>
+//   )}
