@@ -11,7 +11,7 @@ export default class App extends Component {
     return (
       <div className="App">
         <Provider store={store}>
-          <OrderPageContainer />
+          <InboxPageContainer />
         </Provider>
       </div>
     );

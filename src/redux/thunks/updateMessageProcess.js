@@ -9,6 +9,7 @@ export default function updateMessageProcess(messageId, changes, actionType) {
   return (dispatch, getState) => {
     return updateMessage(messageId, changes).then(updatedMessage => {
       dispatch({ type: actionType, message: updatedMessage });
+      getState();
       return updatedMessage;
     });
   };

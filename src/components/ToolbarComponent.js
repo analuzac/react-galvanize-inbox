@@ -40,20 +40,25 @@ export default function ToolbarComponent({
   onApplyLabelSelectedMessages,
   onRemoveLabelSelectedMessages,
   onDeleteSelectedMessages,
-  onOpenComposeForm
+  onOpenComposeForm,
+  //Additional ones because of change in signature of onMarkAsUnread and Read SelectedMessages
+  selectedMessageIds,
+  onMarkAsReadMessage,
+  onMarkAsUnreadMessage
 }) {
   function handleClickReadButton(event) {
     const $readButton = event.target;
     console.log($readButton);
     console.log('touched MARK AS READ button');
-    onMarkAsReadSelectedMessages();
+    //onMarkAsReadSelectedMessages();
+    onMarkAsReadSelectedMessages(onMarkAsReadMessage, selectedMessageIds);
   }
 
   function handleClickUnreadButton(event) {
     const $unreadButton = event.target;
     console.log($unreadButton);
     console.log('touched MARK AS UNREAD button');
-    onMarkAsUnreadSelectedMessages();
+    onMarkAsUnreadSelectedMessages(onMarkAsUnreadMessage, selectedMessageIds);
   }
 
   function handleSelectAllMessages(event) {

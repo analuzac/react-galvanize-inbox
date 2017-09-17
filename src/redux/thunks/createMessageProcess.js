@@ -11,6 +11,7 @@ export default function createMessageProcess(composedMessage) {
         shouldShowComposeForm: false,
         message: createdMessage
       });
+      getState();
       return createdMessage;
     });
   };

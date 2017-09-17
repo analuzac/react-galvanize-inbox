@@ -7,6 +7,7 @@ export default function deleteMessageProcess(messageId) {
   return (dispatch, getState) => {
     return deleteMessage(messageId).then(wasDeleted => {
       dispatch({ type: 'DELETE_SELECTED_MESSAGES', messageId: messageId });
+      getState();
       return wasDeleted;
     });
   };
