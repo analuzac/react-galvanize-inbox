@@ -15,7 +15,7 @@ function mapStateToProps(state, ownProps) {
   return {
     messages: state.messages,
     selectedMessageIds: state.selectedMessageIds,
-    shouldShowComposeForm: state.shouldShowComposeForm,
+    showComposeForm: state.shouldShowComposeForm,
     showApiError: state.showApiError
   };
 }
@@ -23,11 +23,12 @@ function mapStateToProps(state, ownProps) {
 function mapDispatchToProps(dispatch, ownProps) {
   return {
     onMount: () => dispatch(getMessagesProcess()),
-    onOpenComposeForm: () =>
+    onOpenComposeForm: () => {
       dispatch({
         type: 'OPEN_COMPOSE_FORM',
-        shouldShowComposeForm: true
-      }),
+        shouldShow: true
+      });
+    },
     onComposeFormCancel: () =>
       dispatch({
         type: 'COMPOSE_FORM_CANCEL',
@@ -43,12 +44,6 @@ function mapDispatchToProps(dispatch, ownProps) {
             labels: 'new'
           }
         })
-        // createMessageProcess({
-        //   subject: subject,
-        //   read: false,
-        //   starred: false,
-        //   labels: 'new'
-        // })
       ),
     onMarkAsReadMessage: messageId =>
       dispatch(updateMessageProcess(messageId, { read: true }, 'MARK_AS_READ')),
@@ -73,17 +68,6 @@ function mapDispatchToProps(dispatch, ownProps) {
           'MARK_AS_UNREAD'
         )
       ),
-    // onMarkAsReadSelectedMessages: (
-    //   selectedMessageIds
-    // ) =>
-    //   selectedMessageIds.forEach(messageId => dispatch(
-    //     updateMessageProcess(messageId, { read: true }, 'MARK_AS_READ')),
-    // onMarkAsUnreadSelectedMessages: (
-    //   selectedMessageIds
-    // ) =>
-    //   selectedMessageIds.forEach(messageId => dispatch(
-    //     updateMessageProcess(messageId, { read: false }, 'MARK_AS_UNREAD')
-    //   ),
 
     onStarMessage: messageId =>
       dispatch(
@@ -112,77 +96,16 @@ function mapDispatchToProps(dispatch, ownProps) {
         type: 'DESELECT_ALL_MESSAGES'
       }),
 
-    //
-    // Helper function for _applyLabelSelectedMessages
-    // onApplyLabel: ({ label, messageId, messages }) => {
-    //   //debugger;
-    //   messages.forEach(message => {
-    //     if (messageId === message.id) {
-    //       if (message.labels.includes(label)) {
-    //         //nothing happens
-    //       } else {
-    //         let labelArray = message.labels;
-    //         labelArray.push(label);
-    //         let newLabels = labelArray.join(',');
-    //
-    //         let changes = {};
-    //         changes.labels = newLabels;
-    //
-    //         let actionType = 'APPLY_LABEL';
-    //
-    //         dispatch(updateMessageProcess(messageId, changes, actionType));
-    //       }
-    //     }
-    //   });
-    // },
+    onApplyLabelSelectedMessages: label =>
+      dispatch(updateApplyLabelsProcess(label)),
 
-    onApplyLabelSelectedMessages: ({ label, messageId }) =>
-      dispatch(updateApplyLabelsProcess(messageId, label)),
-
-    //Helper function for _removeLabelSelectedMessages
-    // onRemoveLabel: ({ label, messageId, messages }) => {
-    //   messages.forEach(message => {
-    //     if (messageId === message.id) {
-    //       if (message.labels.includes(label)) {
-    //         let labelArray = message.labels;
-    //         labelArray.splice(labelArray.indexOf(label), 1);
-    //         let newLabels = labelArray.join(',');
-    //
-    //         let changes = {};
-    //         changes.labels = newLabels;
-    //
-    //         let actionType = 'REMOVE_LABEL';
-    //
-    //         dispatch(updateMessageProcess(messageId, changes, actionType));
-    //       }
-    //     }
-    //   });
-    // },
-
-    onRemoveLabelSelectedMessages: ({ label, messageId }) =>
-      dispatch(updateRemoveLabelsProcess(messageId, label)),
-
-    // onRemoveLabelSelectedMessages: ({
-    //   label,
-    //   selectedMessageIds,
-    //   onRemoveLabel
-    // }) => {
-    //   selectedMessageIds.forEach(messageId =>
-    //     onRemoveLabel({ label, messageId })
-    //   );
-    // },
+    onRemoveLabelSelectedMessages: label => {
+      dispatch(updateRemoveLabelsProcess(label));
+    },
 
     onDeleteSelectedMessages: messageId => {
-      // selectedMessageIds.forEach(messageId => {
-      //   messages.forEach(message => {
-      //     if (messageId === message.id) {
       dispatch(deleteMessageProcess(messageId));
-      //     }
-      //   });
-      // });
     }
-
-    //);
   };
 }
 

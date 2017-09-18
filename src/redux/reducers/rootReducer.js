@@ -93,7 +93,7 @@ export default function rootReducer(
     case 'OPEN_COMPOSE_FORM':
       return {
         ...currentState,
-        shouldShowComposeForm: action.shouldShowComposeForm
+        shouldShowComposeForm: action.shouldShow
       };
     case 'COMPOSE_FORM_CANCEL':
       return {

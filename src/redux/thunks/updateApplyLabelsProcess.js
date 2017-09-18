@@ -1,8 +1,6 @@
-// thunk(messageId, changes, actionType);
-
 import updateMessage from '../.././api/updateMessage';
 
-export default function updateApplyLabelsProcess(messageId, label) {
+export default function updateApplyLabelsProcess(label) {
   //We dont use env here but leaving as placeholder
   // as a reminder that it's available to me:
   //return (dispatch, getState, env) => {
@@ -22,7 +20,6 @@ export default function updateApplyLabelsProcess(messageId, label) {
 
             let actionType = 'APPLY_LABEL';
 
-            //console.log(getState(), '<<<<<< getState');
             return updateMessage(messageId, changes).then(updatedMessage => {
               dispatch({ type: actionType, message: updatedMessage });
               return updatedMessage;
