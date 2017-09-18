@@ -5,10 +5,19 @@ export default function deleteMessageProcess(messageId) {
   // as a reminder that it's available to me:
   //return (dispatch, getState, env) => {
   return (dispatch, getState) => {
-    return deleteMessage(messageId).then(wasDeleted => {
-      dispatch({ type: 'DELETE_SELECTED_MESSAGES', messageId: messageId });
-      getState();
-      return wasDeleted;
+    getState().selectedMessageIds.forEach(messageId => {
+      getState().messages.forEach(message => {
+        if (messageId === message.id) {
+          return deleteMessage(messageId).then(wasDeleted => {
+            dispatch({
+              type: 'DELETE_SELECTED_MESSAGES',
+              messageId: messageId
+            });
+
+            return wasDeleted;
+          });
+        }
+      });
     });
   };
 }

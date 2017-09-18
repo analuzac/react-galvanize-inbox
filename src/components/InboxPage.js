@@ -13,7 +13,7 @@ export default function InboxPage({
   onSelectMessage,
   onDeselectMessage,
   onMarkAsReadMessage,
-  onMarkAsUnreadMessage,
+  // onMarkAsUnreadMessage,
   onSelectAllMessages,
   onDeselectAllMessages,
   onMarkAsReadSelectedMessages,
@@ -40,9 +40,9 @@ export default function InboxPage({
           onDeleteSelectedMessages={onDeleteSelectedMessages}
           onOpenComposeForm={onOpenComposeForm}
           // Additional ones because of change in signature of onMarkAsUnreadSelectedMessages
-          selectedMessageIds={selectedMessageIds}
-          onMarkAsReadMessage={onMarkAsReadMessage}
-          onMarkAsUnreadMessage={onMarkAsUnreadMessage}
+          // selectedMessageIds={selectedMessageIds}
+          // onMarkAsReadMessage={onMarkAsReadMessage}
+          // onMarkAsUnreadMessage={onMarkAsUnreadMessage}
         />
         <MessagesComponent
           messages={messages}

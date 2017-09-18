@@ -7,6 +7,9 @@ import getMessagesProcess from '../thunks/getMessagesProcess';
 import updateMessageProcess from '../thunks/updateMessageProcess';
 import deleteMessageProcess from '../thunks/deleteMessageProcess';
 import createMessageProcess from '../thunks/createMessageProcess';
+import updateMarkAsReadUnreadSelectedMessagesProcess from '../thunks/updateMarkAsReadUnreadSelectedMessagesProcess';
+import updateApplyLabelsProcess from '../thunks/updateApplyLabelsProcess';
+import updateRemoveLabelsProcess from '../thunks/updateRemoveLabelsProcess';
 
 function mapStateToProps(state, ownProps) {
   return {
@@ -32,20 +35,20 @@ function mapDispatchToProps(dispatch, ownProps) {
       }),
     onComposeFormSubmit: ({ subject, body }) =>
       dispatch(
-        // createMessageProcess({
-        //   fields: {
-        //     subject: subject,
-        //     read: false,
-        //     starred: false,
-        //     labels: 'new'
-        //   }
-        // })
         createMessageProcess({
-          subject: subject,
-          read: false,
-          starred: false,
-          labels: 'new'
+          fields: {
+            subject: subject,
+            read: false,
+            starred: false,
+            labels: 'new'
+          }
         })
+        // createMessageProcess({
+        //   subject: subject,
+        //   read: false,
+        //   starred: false,
+        //   labels: 'new'
+        // })
       ),
     onMarkAsReadMessage: messageId =>
       dispatch(updateMessageProcess(messageId, { read: true }, 'MARK_AS_READ')),
@@ -53,6 +56,35 @@ function mapDispatchToProps(dispatch, ownProps) {
       dispatch(
         updateMessageProcess(messageId, { read: false }, 'MARK_AS_UNREAD')
       ),
+
+    onMarkAsReadSelectedMessages: messageId =>
+      dispatch(
+        updateMarkAsReadUnreadSelectedMessagesProcess(
+          messageId,
+          { read: true },
+          'MARK_AS_READ'
+        )
+      ),
+    onMarkAsUnreadSelectedMessages: messageId =>
+      dispatch(
+        updateMarkAsReadUnreadSelectedMessagesProcess(
+          messageId,
+          { read: false },
+          'MARK_AS_UNREAD'
+        )
+      ),
+    // onMarkAsReadSelectedMessages: (
+    //   selectedMessageIds
+    // ) =>
+    //   selectedMessageIds.forEach(messageId => dispatch(
+    //     updateMessageProcess(messageId, { read: true }, 'MARK_AS_READ')),
+    // onMarkAsUnreadSelectedMessages: (
+    //   selectedMessageIds
+    // ) =>
+    //   selectedMessageIds.forEach(messageId => dispatch(
+    //     updateMessageProcess(messageId, { read: false }, 'MARK_AS_UNREAD')
+    //   ),
+
     onStarMessage: messageId =>
       dispatch(
         updateMessageProcess(messageId, { starred: true }, 'STAR_MESSAGE')
@@ -79,87 +111,75 @@ function mapDispatchToProps(dispatch, ownProps) {
       dispatch({
         type: 'DESELECT_ALL_MESSAGES'
       }),
-    onMarkAsReadSelectedMessages: ({
-      selectedMessageIds,
-      onMarkAsReadMessage
-    }) =>
-      selectedMessageIds.forEach(messageId => onMarkAsReadMessage(messageId)),
-    onMarkAsUnreadSelectedMessages: ({
-      selectedMessageIds,
-      onMarkAsUnreadMessage
-    }) =>
-      selectedMessageIds.forEach(messageId => onMarkAsUnreadMessage(messageId)),
-    //Helper function for _applyLabelSelectedMessages
-    onApplyLabel: ({ label, messageId, messages }) => {
-      //debugger;
-      messages.forEach(message => {
-        if (messageId === message.id) {
-          if (message.labels.includes(label)) {
-            //nothing happens
-          } else {
-            let labelArray = message.labels;
-            labelArray.push(label);
-            let newLabels = labelArray.join(',');
 
-            let changes = {};
-            changes.labels = newLabels;
+    //
+    // Helper function for _applyLabelSelectedMessages
+    // onApplyLabel: ({ label, messageId, messages }) => {
+    //   //debugger;
+    //   messages.forEach(message => {
+    //     if (messageId === message.id) {
+    //       if (message.labels.includes(label)) {
+    //         //nothing happens
+    //       } else {
+    //         let labelArray = message.labels;
+    //         labelArray.push(label);
+    //         let newLabels = labelArray.join(',');
+    //
+    //         let changes = {};
+    //         changes.labels = newLabels;
+    //
+    //         let actionType = 'APPLY_LABEL';
+    //
+    //         dispatch(updateMessageProcess(messageId, changes, actionType));
+    //       }
+    //     }
+    //   });
+    // },
 
-            let actionType = 'APPLY_LABEL';
-
-            dispatch(updateMessageProcess(messageId, changes, actionType));
-          }
-        }
-      });
-    },
-
-    onApplyLabelSelectedMessages: ({
-      label,
-      selectedMessageIds,
-      onApplyLabel
-    }) => {
-      selectedMessageIds.forEach(messageId =>
-        onApplyLabel({ label, messageId })
-      );
-    },
+    onApplyLabelSelectedMessages: ({ label, messageId }) =>
+      dispatch(updateApplyLabelsProcess(messageId, label)),
 
     //Helper function for _removeLabelSelectedMessages
-    onRemoveLabel: ({ label, messageId, messages }) => {
-      messages.forEach(message => {
-        if (messageId === message.id) {
-          if (message.labels.includes(label)) {
-            let labelArray = message.labels;
-            labelArray.splice(labelArray.indexOf(label), 1);
-            let newLabels = labelArray.join(',');
+    // onRemoveLabel: ({ label, messageId, messages }) => {
+    //   messages.forEach(message => {
+    //     if (messageId === message.id) {
+    //       if (message.labels.includes(label)) {
+    //         let labelArray = message.labels;
+    //         labelArray.splice(labelArray.indexOf(label), 1);
+    //         let newLabels = labelArray.join(',');
+    //
+    //         let changes = {};
+    //         changes.labels = newLabels;
+    //
+    //         let actionType = 'REMOVE_LABEL';
+    //
+    //         dispatch(updateMessageProcess(messageId, changes, actionType));
+    //       }
+    //     }
+    //   });
+    // },
 
-            let changes = {};
-            changes.labels = newLabels;
+    onRemoveLabelSelectedMessages: ({ label, messageId }) =>
+      dispatch(updateRemoveLabelsProcess(messageId, label)),
 
-            let actionType = 'REMOVE_LABEL';
+    // onRemoveLabelSelectedMessages: ({
+    //   label,
+    //   selectedMessageIds,
+    //   onRemoveLabel
+    // }) => {
+    //   selectedMessageIds.forEach(messageId =>
+    //     onRemoveLabel({ label, messageId })
+    //   );
+    // },
 
-            dispatch(updateMessageProcess(messageId, changes, actionType));
-          }
-        }
-      });
-    },
-
-    onRemoveLabelSelectedMessages: ({
-      label,
-      selectedMessageIds,
-      onRemoveLabel
-    }) => {
-      selectedMessageIds.forEach(messageId =>
-        onRemoveLabel({ label, messageId })
-      );
-    },
-
-    onDeleteSelectedMessages: ({ selectedMessageIds, messages }) => {
-      selectedMessageIds.forEach(messageId => {
-        messages.forEach(message => {
-          if (messageId === message.id) {
-            dispatch(deleteMessageProcess(messageId));
-          }
-        });
-      });
+    onDeleteSelectedMessages: messageId => {
+      // selectedMessageIds.forEach(messageId => {
+      //   messages.forEach(message => {
+      //     if (messageId === message.id) {
+      dispatch(deleteMessageProcess(messageId));
+      //     }
+      //   });
+      // });
     }
 
     //);
